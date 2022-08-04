@@ -1,0 +1,48 @@
+﻿@model BestellserviceWeb.Models.TblKunde
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>TblKunde</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KunVorname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KunVorname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KunNachname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KunNachname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KunGeschlecht)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KunGeschlecht)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KunGeburtsdatum)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KunGeburtsdatum)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.KunVip)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.KunVip)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.KunId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

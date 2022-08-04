@@ -1,0 +1,21 @@
+﻿@model BestellserviceWeb.Models.TblKunde
+
+@{
+    ViewData["Title"] = "Export";
+}
+
+<h1>Export</h1>
+
+<div>
+    are you sure you want to export @Html.DisplayFor(model => model.KunNachname)
+</div>
+<hr />
+<div>
+       
+|           <a asp-action="DownloadWord" asp-route-id="@Model.KunId">Download Word</a> |
+            <a asp-action="DownloadExcel" asp-route-id="@Model.KunId">Download Excel</a> |
+            <a asp-action="DownloadPdf" asp-route-id="@Model.KunId">Download Pdf</a> |
+            <a asp-action="DownloadCsv" asp-route-id="@Model.KunId">Download CSV</a> |
+            <a asp-action="Index">Back to List</a>
+    
+</div>

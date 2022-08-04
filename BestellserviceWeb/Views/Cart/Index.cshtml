@@ -1,0 +1,52 @@
+﻿@model IEnumerable<BestellserviceWeb.Models.TblKunde>
+
+@{
+	    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.KunVorname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KunNachname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KunGeschlecht)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KunGeburtsdatum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KunVip)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.KunVorname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KunNachname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KunGeschlecht)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KunGeburtsdatum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KunVip)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<div>
+   <a asp-action="Export" asp-route-id="@Model">Export</a>
+</div>

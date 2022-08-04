@@ -1,0 +1,15 @@
+﻿<ul class="nav navbar-nav navbar-right">
+	 <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Kunde" asp-action="Cart">
+            Cart
+            @if(TempData["CartSize"] != null)
+            {
+               @if (!TempData["CartSize"].ToString().Equals("0"))
+            {
+             <span>(@TempData["CartSize"])</span>
+            } 
+            }
+            
+</a>
+     </li>
+</ul>
