@@ -1,0 +1,133 @@
+﻿@model List<BestellserviceWeb.Models.TblBilder>
+@{
+    int current = 0;
+}
+@{
+    ViewData["Title"] = "Upload";
+}
+
+<head>
+        <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+
+    <script type="text/javascript">
+        Dropzone.options.uploadForm = { // The camelized version of the ID of the form element
+
+  // The configuration we've talked about above
+  autoProcessQueue: false,
+  acceptedFiles: ".jpeg,.jpg,.png,.gif",
+  addRemoveLinks: true,
+  dictDefaultMessage: "Dateien hier ablegen",
+  dictFallbackMessage: "Dein Browser unterstützt drag'n'drop nicht",
+  dictInvalidFileType: "Dieser Dateitype ist leider nicht unterstützt",
+  dictRemoveFile: "Datei löschen",
+
+  // The setting up of the dropzone
+  init: function() {
+    var myDropzone = this;
+
+    // First change the button to actually tell Dropzone to process the queue.
+    this.element.querySelector("button[type=submit]").addEventListener("click", function(e) {
+      // Make sure that the form isn't actually being sent.
+      e.preventDefault();
+      e.stopPropagation();
+      myDropzone.processQueue();
+    });
+
+    this.on("addedfile", function(){
+          console.log("A file has been added");
+    });
+
+    this.on("addedfile", function(file) {
+        file.previewElement.addEventListener("click", function() {
+        this.removeFile(file);
+  });
+});
+    // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+    // of the sending event because uploadMultiple is set to true.
+    this.on("sendingmultiple", function() {
+      // Gets triggered when the form is actually being sent.
+      // Hide the success button or the complete form.
+    });
+    this.on("successmultiple", function(files, response) {
+      // Gets triggered when the files have successfully been sent.
+      // Redirect user or notify of success.
+    });
+    this.on("errormultiple", function(files, response) {
+      // Gets triggered when there was an error sending the files.
+      // Maybe show form again, and notify user of error
+    });
+  }
+ 
+}</script>
+</head>
+
+<h1>Upload</h1>
+<div>
+    <form asp-controller="Kunde" asp-action="Upload" asp-route-id="@Model.ElementAt(0).BildKunde" class="dropzone" id="uploadForm">
+        <button type="submit" class="btn btn-primary" name="Upload">Submit data and files!</button>
+    </form>
+</div>  
+
+
+
+<!-- Carousel -->
+<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+  <!-- The slideshow/carousel -->
+  <div class="carousel-inner">
+    @for(int i = 1; i < Model.Count(); i++) {
+        var base64 = Convert.ToBase64String(Model.ElementAt(i).BildDatei);
+        var fileExt = Model.ElementAt(i).BildName.Split(".");
+        var filecount = fileExt.Count();
+        var imagesrc = string.Format("data:image/" + fileExt[filecount-1] + ";base64,{0}", base64);
+            current++;
+            var active = Model.ElementAt(i).BildHaupt ? "active" : "";
+        <div class="carousel-item @active">
+            <img src="@imagesrc" alt="@Model.ElementAt(i).BildName" class="d-block w-100">
+        </div>
+ }
+ </div>
+
+
+  <!-- Left and right controls/icons -->
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+
+
+
+
+<table class="table">
+    <tbody>
+@for(int i = 1; i < Model.Count(); i++) {
+        <tr>
+            <td>
+                @Model.ElementAt(i).BildName
+            </td>
+            <td>
+                @Model.ElementAt(i).BildHaupt
+            </td>
+            <td>
+                    @{
+                        var base64 = Convert.ToBase64String(Model.ElementAt(i).BildDatei);
+                        var fileExt = Model.ElementAt(i).BildName.Split(".");
+                        var filecount = fileExt.Count();
+                        var imagesrc = string.Format("data:image/" + fileExt[filecount-1] + ";base64,{0}", base64);
+                }
+                <img src="@imagesrc" style="max-width:100px; max-height:100px"  />
+            </td>
+            <td>
+                <a asp-action="DownloadImage" asp-route-id="@Model.ElementAt(i).BildId">Download</a>
+            </td>
+        </tr>
+}
+   </tbody>
+</table>

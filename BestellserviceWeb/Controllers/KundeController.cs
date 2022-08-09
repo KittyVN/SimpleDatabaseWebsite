@@ -2,7 +2,10 @@
 using BestellserviceWeb.Helpers;
 using BestellserviceWeb.Models;
 using CsvHelper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using NPOI.XWPF.UserModel;
@@ -15,6 +18,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -25,11 +29,13 @@ namespace BestellserviceWeb.Controllers
         private readonly BestellserviceDBContext _context;
         public static List<TblKunde> kundenCart = new List<TblKunde>();
         private readonly string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+        private IWebHostEnvironment hostEnvironment;
 
-        public KundeController(BestellserviceDBContext context)
+
+        public KundeController(BestellserviceDBContext context, IWebHostEnvironment Environment)
         {
             _context = context;
-
+            hostEnvironment = Environment;
         }
 
         public IActionResult Index()
@@ -73,6 +79,76 @@ namespace BestellserviceWeb.Controllers
                 }
             }
             return RedirectToAction("Cart");
+        }
+
+
+        [HttpGet]
+        public IActionResult Upload(int id)
+        {
+            TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
+            List<TblBilder> bilder = _context.TblBilder.ToList();
+            TblBilder hilfsBild = new TblBilder { BildKunde = kunde.KunId };
+            List<TblBilder> kundenBilder = new List<TblBilder>();
+            kundenBilder.Add(hilfsBild);
+            
+            foreach (TblBilder b in bilder)
+            {
+                if(b.BildKunde == kunde.KunId)
+                {
+                    kundenBilder.Add(b);
+                    Byte[] bytes = b.BildDatei;
+                }
+            }
+
+            return View(kundenBilder);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Upload(int id, IFormFile file)
+        {
+            TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
+            List<TblBilder> bilder = _context.TblBilder.ToList();
+            int bilderCount = 0;
+
+            foreach (TblBilder b in bilder)
+            {
+                if(b.BildKunde == kunde.KunId)
+                {
+                    bilderCount++;
+                }
+            }
+
+            var fileDic = "Files";
+            string filePath = Path.Combine(hostEnvironment.WebRootPath, fileDic);
+
+            string filename = file.FileName;
+            filePath = Path.Combine(filePath, filename);
+
+            //FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
+
+            BinaryReader br = new BinaryReader(file.OpenReadStream());
+
+            Byte[] bytes = br.ReadBytes((Int32)file.Length);
+
+            br.Close();
+
+            //fs.Close();
+
+            TblBilder bildToAdd = new TblBilder();
+            
+            //If stimmt so nicht da es alle sind kein Abgleich
+            if (bilderCount>0)
+            {
+                bildToAdd = new TblBilder { BildKunde = kunde.KunId, BildDatei = bytes, BildName = filename, BildHaupt = false };
+            }
+            else
+            {
+                bildToAdd = new TblBilder { BildKunde = kunde.KunId, BildDatei = bytes, BildName = filename, BildHaupt = true };
+            }
+
+            await _context.TblBilder.AddAsync(bildToAdd);
+            await _context.SaveChangesAsync();
+            return View("Upload");
         }
 
 
@@ -130,6 +206,31 @@ namespace BestellserviceWeb.Controllers
             TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
             return View(kunde);
         }
+
+        [HttpGet]
+        public IActionResult DownloadImage(int id)
+        {
+            TblBilder bild = _context.TblBilder.Where(p => p.BildId == id).FirstOrDefault();
+            var fileExt = bild.BildName.Split(".");
+            var filecount = fileExt.Count();
+
+            using (var client = new System.Net.WebClient())
+            {
+
+                using(var memoryImage = new MemoryStream())
+                {
+                    MemoryStream memoryStream = new MemoryStream(bild.BildDatei);
+                    HttpResponseMessage response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+
+                    response.Content = new StreamContent(memoryStream);
+                    response.Content.Headers.ContentType =new System.Net.Http.Headers.MediaTypeHeaderValue("application/"+ fileExt[filecount-1]);
+                }
+
+            }
+
+            return File(bild.BildDatei, "application/" + fileExt[filecount - 1], bild.BildName);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> ExportAllAsync()

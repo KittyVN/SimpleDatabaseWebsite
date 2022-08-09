@@ -30,8 +30,6 @@ namespace BestellserviceWeb.Controllers
         [HttpPost]
         public ActionResult Upload(IFormFile file)
         {
-            var supportedTypes = new[] { "png", "svg", "pdf" };
-
             var fileDic = "Files";
             string filePath = Path.Combine(hostEnvironment.WebRootPath,fileDic);
             if (!Directory.Exists(filePath))
@@ -42,35 +40,40 @@ namespace BestellserviceWeb.Controllers
             filePath = Path.Combine(filePath,fileName);
 
             var fileExt = System.IO.Path.GetExtension(file.FileName).Substring(1);
-            if (supportedTypes.Contains(fileExt))
             {
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     file.CopyTo(stream);
                 }
             }
-                     
             return RedirectToAction("Index");
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Index(List<IFormFile> formFile)
+        public async Task<IActionResult> Index(List<IFormFile> file)
         {
-            var supportedTypes = new[] { "png" };
-
-            if (formFile != null)
+            var supportedTypes = new[] { "png", "svg", "pdf" };
+            var fileDic = "Files";
+            string path = Path.Combine(hostEnvironment.WebRootPath, fileDic);
+            if (!Directory.Exists(path))
             {
-                for(int i = 0; i < formFile.Count(); i++)
+                Directory.CreateDirectory(path);
+            }
+            if (file != null)
+            {
+                for(int i = 0; i < file.Count(); i++)
                 {
-                    var fileExt = System.IO.Path.GetExtension(formFile[i].FileName).Substring(1);
+                    var fileExt = System.IO.Path.GetExtension(file[i].FileName).Substring(1);
                     if (supportedTypes.Contains(fileExt))
                     {
-                        var path = Path.Combine(wwwrootPath, DateTime.Now.Ticks.ToString() + Path.GetExtension(formFile[i].FileName));
+                        var fileName = file.ElementAt(i).FileName;
+                        string filepath = Path.Combine(path, fileName);
+                        //var path = Path.Combine(wwwrootPath, DateTime.Now.Ticks.ToString() + Path.GetExtension(formFile[i].FileName));
 
-                        using (var stream = new FileStream(path, FileMode.Create))
+                        using (var stream = new FileStream(filepath, FileMode.Create))
                         {
-                            await formFile[i].CopyToAsync(stream);
+                            await file[i].CopyToAsync(stream);
                         }
                     }
                     else

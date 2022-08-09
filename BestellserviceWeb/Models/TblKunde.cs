@@ -15,6 +15,8 @@ namespace BestellserviceWeb.Models
         public TblKunde()
         {
             TblBestellung = new HashSet<TblBestellung>();
+            TblBilder = new HashSet<TblBilder>();
+            TblDokumente = new HashSet<TblDokumente>();
         }
 
         [Key]
@@ -37,5 +39,9 @@ namespace BestellserviceWeb.Models
 
         [InverseProperty("BeskunIdrefNavigation")]
         public virtual ICollection<TblBestellung> TblBestellung { get; set; }
+        [InverseProperty("BildKundeNavigation")]
+        public virtual ICollection<TblBilder> TblBilder { get; set; }
+        [InverseProperty("DokKundeNavigation")]
+        public virtual ICollection<TblDokumente> TblDokumente { get; set; }
     }
 }
