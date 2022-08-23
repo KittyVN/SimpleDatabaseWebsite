@@ -83,7 +83,7 @@ namespace BestellserviceWeb.Controllers
 
 
         [HttpGet]
-        public IActionResult Upload(int id)
+        public IActionResult UploadPic(int id)
         {
             TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
             List<TblBilder> bilder = _context.TblBilder.ToList();
@@ -103,8 +103,49 @@ namespace BestellserviceWeb.Controllers
             return View(kundenBilder);
         }
 
+        [HttpGet]
+        public IActionResult UploadPdf(int id)
+        {
+            TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
+            List<TblDokumente> doks = _context.TblDokumente.ToList();
+            TblDokumente hilfsdok = new TblDokumente { DokKunde = kunde.KunId };
+            List<TblDokumente> kundenDoks = new List<TblDokumente>();
+            kundenDoks.Add(hilfsdok);
+
+            foreach (TblDokumente b in doks)
+            {
+                if (b.DokKunde == kunde.KunId)
+                {
+                    kundenDoks.Add(b);
+                }
+            }
+
+            return View(kundenDoks);
+        }
+
         [HttpPost]
-        public async Task<ActionResult> Upload(int id, IFormFile file)
+        public async Task<ActionResult> UploadPdf(int id, IFormFile file)
+        {
+            TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
+            List<TblDokumente> doks = _context.TblDokumente.ToList();
+
+            string filename = file.FileName;
+            BinaryReader br = new BinaryReader(file.OpenReadStream());
+            Byte[] bytes = br.ReadBytes((Int32)file.Length);
+            br.Close();
+
+            TblDokumente dokToAdd = new TblDokumente();
+
+            dokToAdd = new TblDokumente { DokKunde = kunde.KunId, DokDatei = bytes, DokName = filename};
+
+            await _context.TblDokumente.AddAsync(dokToAdd);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("UploadPdf", "Kunde");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadPic(int id, IFormFile file)
         {
             TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
             List<TblBilder> bilder = _context.TblBilder.ToList();
@@ -136,8 +177,9 @@ namespace BestellserviceWeb.Controllers
 
             TblBilder bildToAdd = new TblBilder();
             
-            //If stimmt so nicht da es alle sind kein Abgleich
-            if (bilderCount>0)
+
+            //on purpose to always put false cause we wont use the true anymore
+            if (bilderCount>=0)
             {
                 bildToAdd = new TblBilder { BildKunde = kunde.KunId, BildDatei = bytes, BildName = filename, BildHaupt = false };
             }
@@ -148,7 +190,8 @@ namespace BestellserviceWeb.Controllers
 
             await _context.TblBilder.AddAsync(bildToAdd);
             await _context.SaveChangesAsync();
-            return View("Upload");
+
+            return RedirectToAction("UploadPic", "Kunde");
         }
 
 
@@ -231,6 +274,29 @@ namespace BestellserviceWeb.Controllers
             return File(bild.BildDatei, "application/" + fileExt[filecount - 1], bild.BildName);
         }
 
+        [HttpGet]
+        public IActionResult DownloadPdfDirect(int id)
+        {
+            TblDokumente dok = _context.TblDokumente.Where(p => p.DokId == id).FirstOrDefault();
+            var fileExt = dok.DokName.Split(".");
+            var filecount = fileExt.Count();
+
+            using (var client = new System.Net.WebClient())
+            {
+
+                using (var memoryImage = new MemoryStream())
+                {
+                    MemoryStream memoryStream = new MemoryStream(dok.DokDatei);
+                    HttpResponseMessage response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+
+                    response.Content = new StreamContent(memoryStream);
+                    response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/pdf");
+                }
+
+            }
+
+            return File(dok.DokDatei, "application/pdf", dok.DokName);
+        }
 
         [HttpGet]
         public async Task<IActionResult> ExportAllAsync()

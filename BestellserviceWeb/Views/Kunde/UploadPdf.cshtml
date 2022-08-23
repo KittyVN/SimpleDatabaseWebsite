@@ -1,0 +1,101 @@
+﻿@model List<BestellserviceWeb.Models.TblDokumente>
+@{
+    ViewData["Title"] = "Upload";
+}
+
+<head>
+        <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+
+    <script type="text/javascript">
+        Dropzone.options.uploadForm = { // The camelized version of the ID of the form element
+
+  // The configuration we've talked about above
+  autoProcessQueue: false,
+  acceptedFiles: ".pdf",
+  addRemoveLinks: true,
+  dictDefaultMessage: "Dateien hier ablegen",
+  dictFallbackMessage: "Dein Browser unterstützt drag'n'drop nicht",
+  dictInvalidFileType: "Dieser Dateitype ist leider nicht unterstützt",
+  dictRemoveFile: "Datei löschen",
+  uploadMultiple: false,
+  paramName: "file",
+
+
+  // The setting up of the dropzone
+  init: function() {
+    var myDropzone = this;
+
+    // First change the button to actually tell Dropzone to process the queue.
+    this.element.querySelector("button[type=submit]").addEventListener("click", function(e) {
+      // Make sure that the form isn't actually being sent.
+      e.preventDefault();
+      e.stopPropagation();
+      myDropzone.processQueue();
+    });
+
+    this.on("processing", function() {
+        this.options.autoProcessQueue = true;
+    });
+
+    this.on("queuecomplete", function() {
+        console.log("fertig");
+        document.location.reload(true);
+    });
+
+    this.on("addedfile", function(){
+        console.log("A file has been added");
+    });
+
+    this.on("addedfile", function(file) {
+        file.previewElement.addEventListener("click", function() {
+        this.removeFile(file);
+  });
+});
+    // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+    // of the sending event because uploadMultiple is set to true.
+    this.on("sendingmultiple", function() {
+      // Gets triggered when the form is actually being sent.
+      // Hide the success button or the complete form.
+    });
+    this.on("successmultiple", function(file, response) {
+      // Gets triggered when the files have successfully been sent.
+      // Redirect user or notify of success.
+    });
+    this.on("errormultiple", function(file, response) {
+      // Gets triggered when there was an error sending the files.
+      // Maybe show form again, and notify user of error
+    });
+  }
+ 
+}</script>
+</head>
+
+<script type="text/javascript">
+    function forcereload() {
+        setTimeout(() => { document.location.reload(true); }, 750);
+}
+</script>
+
+<h1>Upload</h1>
+<div>
+    <form asp-controller="Kunde" asp-action="UploadPdf" asp-route-id="@Model.ElementAt(0).DokKunde" class="dropzone" id="uploadForm">
+        <button type="submit" class="btn btn-primary" name="Upload">Submit data and files!</button>
+    </form>
+</div>  
+
+<table class="table">
+    <tbody>
+@for(int i = 1; i < Model.Count(); i++) {
+        <tr>
+            <td>
+                @Model.ElementAt(i).DokName
+            </td>
+            <td>
+                <a asp-action="DownloadPdfDirect" asp-route-id="@Model.ElementAt(i).DokId">Download</a>
+            </td>
+        </tr>
+}
+   </tbody>
+</table>

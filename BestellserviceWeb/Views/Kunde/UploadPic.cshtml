@@ -35,6 +35,15 @@
       myDropzone.processQueue();
     });
 
+    this.on("processing", function() {
+        this.options.autoProcessQueue = true;
+    });
+
+    this.on("queuecomplete", function() {
+            console.log("fertig");
+            document.location.reload(true);
+     });
+
     this.on("addedfile", function(){
           console.log("A file has been added");
     });
@@ -63,13 +72,18 @@
 }</script>
 </head>
 
+<script type="text/javascript">
+    function forcereload() {
+        setTimeout(() => { document.location.reload(true); }, 750);
+}
+</script>
+
 <h1>Upload</h1>
 <div>
-    <form asp-controller="Kunde" asp-action="Upload" asp-route-id="@Model.ElementAt(0).BildKunde" class="dropzone" id="uploadForm">
+    <form asp-controller="Kunde" asp-action="UploadPic" asp-route-id="@Model.ElementAt(0).BildKunde" class="dropzone" id="uploadForm">
         <button type="submit" class="btn btn-primary" name="Upload">Submit data and files!</button>
     </form>
 </div>  
-
 
 
 <!-- Carousel -->
@@ -82,13 +96,28 @@
         var filecount = fileExt.Count();
         var imagesrc = string.Format("data:image/" + fileExt[filecount-1] + ";base64,{0}", base64);
             current++;
-            var active = Model.ElementAt(i).BildHaupt ? "active" : "";
-        <div class="carousel-item @active">
-            <img src="@imagesrc" alt="@Model.ElementAt(i).BildName" class="d-block w-100">
-        </div>
- }
- </div>
 
+            @if (i == 1)
+            {
+            <div class="carousel-item active">
+                <img src="@imagesrc" alt="@Model.ElementAt(i).BildName" class="img-fluid">
+                <div class="carousel-caption d-none d-md-block">
+                    <p>@Model.ElementAt(i).BildName</p>
+                </div>
+                </div>
+            }
+            else
+            {
+            <div class="carousel-item">
+                <img src="@imagesrc" alt="@Model.ElementAt(i).BildName" class="img-fluid">
+                <div class="carousel-caption d-none d-md-block">
+                    <p>@Model.ElementAt(i).BildName</p>
+                </div>
+            </div>
+            }
+
+        }
+ </div>
 
   <!-- Left and right controls/icons -->
   <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -100,11 +129,8 @@
     <span class="sr-only">Next</span>
   </a>
 </div>
-
-
-
-
-
+<br/>
+<h2>Pictures added to the Kunde</h2>
 <table class="table">
     <tbody>
 @for(int i = 1; i < Model.Count(); i++) {
@@ -122,7 +148,7 @@
                         var filecount = fileExt.Count();
                         var imagesrc = string.Format("data:image/" + fileExt[filecount-1] + ";base64,{0}", base64);
                 }
-                <img src="@imagesrc" style="max-width:100px; max-height:100px"  />
+                <img src="@imagesrc" class="img-fluid" style="max-width:100px; max-height:100px"  />
             </td>
             <td>
                 <a asp-action="DownloadImage" asp-route-id="@Model.ElementAt(i).BildId">Download</a>
