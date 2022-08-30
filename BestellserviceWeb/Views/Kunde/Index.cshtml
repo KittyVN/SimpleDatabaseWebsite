@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    List<TblGeschlecht> geschlechter = ViewBag.geschlechter;
 }
 
 
@@ -41,14 +42,28 @@
                 @Html.DisplayFor(modelItem => item.KunNachname)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.KunGeschlecht)
+                    @for(int i = 0; i < geschlechter.Count(); i++)
+                    {
+                        if(geschlechter.ElementAt(i).GesId == item.KunGeschlecht)
+                        {
+                            <span> @geschlechter.ElementAt(i).GesGeschlecht</span>
+                            break;
+                        }
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.KunGeburtsdatum)
             </td>
             <td>
-                <span>@item.KunVip</span>
-            </td>
+                    @if (item.KunVip)
+                    {
+                        <input type="checkbox" disabled="disabled" checked="checked">
+                    }
+                    else
+                    {
+                       <input type="checkbox" disabled="disabled">
+                    }
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.KunId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.KunId">Details</a> |
@@ -56,6 +71,8 @@
                 <a asp-action="Export" asp-route-id="@item.KunId">Export</a> |
                 <a asp-action="UploadPic" asp-route-id="@item.KunId">Upload Pictures</a> |
                 <a asp-action="UploadPdf" asp-route-id="@item.KunId">Upload Pdf</a> |
+                <a asp-action="Bestellung" asp-route-id="@item.KunId">Bestellung</a> |
+
 
 
                 <form asp-action="CartAdd" asp-route-id="@item.KunId">

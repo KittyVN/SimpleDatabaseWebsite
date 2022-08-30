@@ -28,6 +28,7 @@ namespace BestellserviceWeb.Controllers
     {
         private readonly BestellserviceDBContext _context;
         public static List<TblKunde> kundenCart = new List<TblKunde>();
+        public static int KundenID;
         private readonly string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         private IWebHostEnvironment hostEnvironment;
 
@@ -41,7 +42,9 @@ namespace BestellserviceWeb.Controllers
         public IActionResult Index()
         {
             List<TblKunde> kunden = _context.TblKunde.ToList();
+            List<TblGeschlecht> geschlechter = _context.TblGeschlecht.ToList();
             TempData["CartSize"] = kundenCart.Count();
+            ViewBag.geschlechter = geschlechter;
             return View(kunden);
         }
 
@@ -202,6 +205,119 @@ namespace BestellserviceWeb.Controllers
             return View(kunde);
         }
 
+        [HttpGet]
+        public IActionResult Bestellung(int id)
+        {
+            List<TblBestellung> bestellungen = _context.TblBestellung.Where(p => p.BeskunIdref == id).ToList();
+            List<TblProdukte> produkte = _context.TblProdukte.ToList();
+            TblKunde kunde = _context.TblKunde.Where(p => p.KunId == id).FirstOrDefault();
+            ViewBag.bestellungen = bestellungen;
+            ViewBag.produkte = produkte;
+            ViewBag.kunde = kunde;
+            KundenID = kunde.KunId;
+            BestellungenList bestellungenWithInfo = new BestellungenList();
+            int counter = 0;
+
+            bestellungenWithInfo.KundeID = kunde.KunId;
+            foreach (TblProdukte produkt in produkte)
+            {
+                int foundProduct = 0;
+                for(int i = 0; i < bestellungen.Count; i++)
+                {
+                    if(bestellungen.ElementAt(i).BesproIdref == produkt.ProId)
+                    {
+                        foundProduct++;
+                    }
+
+                }
+
+                if (foundProduct > 0)
+                {
+                    bestellungenWithInfo.ProdukteID.Add(produkt.ProId);
+                    bestellungenWithInfo.ProdukteName.Add(produkt.ProBezeichnung);
+                    bestellungenWithInfo.Active.Add(true);
+                }
+                else
+                {
+                    bestellungenWithInfo.ProdukteID.Add(produkt.ProId);
+                    bestellungenWithInfo.ProdukteName.Add(produkt.ProBezeichnung);
+                    bestellungenWithInfo.Active.Add(false);
+                }
+
+                counter++;
+            }
+
+            return View(bestellungenWithInfo);
+        }
+
+        [HttpPost]
+        public IActionResult BestellungEdit([FromForm]BestellungenList bestellungen)
+        {
+            List<TblBestellung> bestellungenToEdit = new List<TblBestellung>();
+            List<TblBestellung> bestellungenToCreate = new List<TblBestellung>();
+
+
+            List<TblProdukte> produkte = _context.TblProdukte.ToList();
+            List<TblBestellung> bestell = _context.TblBestellung.ToList();
+
+            bool found;
+
+            for (int pointInList = 0; pointInList < bestellungen.ProdukteID.Count(); pointInList++)
+            {
+                found = false;
+                for(int i = 0; i < bestell.Count(); i++)
+                {
+                    if(bestell[i].BesproIdref == bestellungen.ProdukteID[pointInList] && bestell[i].BeskunIdref == bestellungen.KundeID)
+                    {
+                        if (!bestellungen.Active[pointInList])
+                        {
+                            found = true;
+                            TblBestellung bestellungTemp = _context.TblBestellung.Where(p => p.BeskunIdref == bestellungen.KundeID && p.BesproIdref == bestellungen.ProdukteID[pointInList]).FirstOrDefault();
+                            _context.Attach(bestellungTemp);
+                            _context.Entry(bestellungTemp).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                        }
+                        else
+                        {
+                            found =true;
+                        }
+                    }
+                }
+                if (!found && bestellungen.Active[pointInList])
+                {
+                    TblBestellung bestNewTemp = new TblBestellung();
+                    bestNewTemp.BeskunIdref = bestellungen.KundeID;
+                    bestNewTemp.BesMenge = 1;
+                    bestNewTemp.BesproIdref = bestellungen.ProdukteID[pointInList];
+                    _context.Attach(bestNewTemp);
+                    _context.Entry(bestNewTemp).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+                }else if (found)
+                {
+                    continue;
+                }
+
+
+            }
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult CreateProdukt()
+        {
+            TblProdukte produkt = new TblProdukte();
+            return PartialView("CreateProdukt",produkt);
+        }
+
+        [HttpPost]
+        public IActionResult CreateProdukt(TblProdukte produkt)
+        {
+            _context.Attach(produkt);
+            _context.Entry(produkt).State = Microsoft.EntityFrameworkCore.EntityState.Added;
+            _context.SaveChanges();
+            return RedirectToAction("Bestellung", new { id = KundenID });
+        }
+
+
         [HttpPost]
         public IActionResult Edit(TblKunde kunde)
         {
@@ -231,6 +347,8 @@ namespace BestellserviceWeb.Controllers
         public IActionResult Create()
         {
             TblKunde kunde = new TblKunde();
+            List<TblGeschlecht> geschlechter = _context.TblGeschlecht.ToList();
+            ViewBag.geschlechter = geschlechter;
             return View(kunde);
         }
 
@@ -318,7 +436,7 @@ namespace BestellserviceWeb.Controllers
             rect = new XRect(310, 100, 250, 220);
             gfx.DrawRectangle(XBrushes.SeaShell, rect);
             tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString(kunden[0].KunGeschlecht, font, XBrushes.Black, rect, XStringFormats.TopLeft);
+            tf.DrawString(kunden[0].KunGeschlecht.ToString(), font, XBrushes.Black, rect, XStringFormats.TopLeft);
 
             rect = new XRect(40, 400, 250, 220);
             gfx.DrawRectangle(XBrushes.SeaShell, rect);
@@ -384,7 +502,7 @@ namespace BestellserviceWeb.Controllers
             p2.BorderBetween = Borders.Single;
 
             XWPFRun r2 = p2.CreateRun();
-            r2.SetText(kunde.KunGeschlecht);
+            r2.SetText(kunde.KunGeschlecht.ToString());
             r2.IsStrikeThrough = true;
             r2.FontSize = 20;
 

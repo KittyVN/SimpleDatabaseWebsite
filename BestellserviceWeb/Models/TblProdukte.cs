@@ -31,5 +31,10 @@ namespace BestellserviceWeb.Models
 
         [InverseProperty("BesproIdrefNavigation")]
         public virtual ICollection<TblBestellung> TblBestellung { get; set; }
+
+        public override string ToString()
+        {
+            return this.ProBezeichnung;
+        }
     }
 }

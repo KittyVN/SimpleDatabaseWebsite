@@ -1,0 +1,77 @@
+﻿@model BestellungenList
+
+@{
+    ViewData["Title"] = "Bestellung";
+    List<TblProdukte> produkte = ViewBag.produkte;
+    List<TblBestellung> bestellungen = ViewBag.bestellungen;
+    TblKunde kunde = ViewBag.kunde;
+}
+
+<div class="col-xs-6">
+<h1>Bestellung</h1>
+<hr />
+<div class="table-responsive">
+<table class="table">
+    <tbody>
+                @foreach( TblBestellung best in bestellungen)
+                {
+                    <tr>
+                        <td>
+                            @for(int x = 0; x < produkte.Count(); x++)
+                            {
+                                if(best.BesproIdref == produkte.ElementAt(x).ProId)
+                                {
+                                  <span>@produkte.ElementAt(x).ProBezeichnung</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+   </div>
+<div class="col-xs-6">
+<h1>Produkte</h1>
+<hr />
+<div class="table-responsive">
+    <div id="placeholderHere">
+
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#addNewProdukt" data-url="@Url.Action("CreateProdukt")">
+        +
+    </button>
+<form asp-action = "BestellungEdit">
+    <table class="table" id="tableToReload">
+         @Html.HiddenFor(model => model.KundeID)
+
+                @for(int i = 0; i < Model.Active.Count(); i++)
+                {
+                    <tr>                   
+                             @Html.HiddenFor(model => model.ProdukteID[i])
+                             @Html.HiddenFor(model => model.ProdukteName[i])
+
+                        <td>
+                             @Html.CheckBoxFor(model => model.Active[i])
+                        </td>
+                        <td>
+                             @Html.DisplayFor(model => model.ProdukteName[i]) 
+                        </td>
+                    </tr>
+                }
+    </table>
+            <p>
+            <input type="submit" value="Save" />
+        </p>
+</form>
+
+</div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

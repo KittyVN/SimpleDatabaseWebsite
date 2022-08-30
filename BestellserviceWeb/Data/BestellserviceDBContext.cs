@@ -23,6 +23,7 @@ namespace BestellserviceWeb.Data
         public virtual DbSet<TblBestellung> TblBestellung { get; set; }
         public virtual DbSet<TblBilder> TblBilder { get; set; }
         public virtual DbSet<TblDokumente> TblDokumente { get; set; }
+        public virtual DbSet<TblGeschlecht> TblGeschlecht { get; set; }
         public virtual DbSet<TblKunde> TblKunde { get; set; }
         public virtual DbSet<TblProdukte> TblProdukte { get; set; }
 
@@ -87,16 +88,27 @@ namespace BestellserviceWeb.Data
                     .HasConstraintName("fk_tblDokumente_Kunde");
             });
 
+            modelBuilder.Entity<TblGeschlecht>(entity =>
+            {
+                entity.HasKey(e => e.GesId)
+                    .HasName("PK__tblGesch__870E22B6CE13D3FE");
+
+                entity.Property(e => e.GesGeschlecht).IsUnicode(false);
+            });
+
             modelBuilder.Entity<TblKunde>(entity =>
             {
                 entity.HasKey(e => e.KunId)
                     .HasName("pk_tblKunde");
 
-                entity.Property(e => e.KunGeschlecht).IsUnicode(false);
-
                 entity.Property(e => e.KunNachname).IsUnicode(false);
 
                 entity.Property(e => e.KunVorname).IsUnicode(false);
+
+                entity.HasOne(d => d.KunGeschlechtNavigation)
+                    .WithMany(p => p.TblKunde)
+                    .HasForeignKey(d => d.KunGeschlecht)
+                    .HasConstraintName("FK__tblKunde__kunGes__0662F0A3");
             });
 
             modelBuilder.Entity<TblProdukte>(entity =>

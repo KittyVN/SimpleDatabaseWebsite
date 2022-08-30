@@ -28,15 +28,16 @@ namespace BestellserviceWeb.Models
         [Required]
         [Column("kunNachname")]
         public string KunNachname { get; set; }
-        [Required]
-        [Column("kunGeschlecht")]
-        [StringLength(20)]
-        public string KunGeschlecht { get; set; }
         [Column("kunGeburtsdatum", TypeName = "datetime")]
         public DateTime? KunGeburtsdatum { get; set; }
         [Column("kunVIP")]
-        public bool? KunVip { get; set; }
+        public bool KunVip { get; set; }
+        [Column("kunGeschlecht")]
+        public int? KunGeschlecht { get; set; }
 
+        [ForeignKey(nameof(KunGeschlecht))]
+        [InverseProperty(nameof(TblGeschlecht.TblKunde))]
+        public virtual TblGeschlecht KunGeschlechtNavigation { get; set; }
         [InverseProperty("BeskunIdrefNavigation")]
         public virtual ICollection<TblBestellung> TblBestellung { get; set; }
         [InverseProperty("BildKundeNavigation")]

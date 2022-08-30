@@ -1,0 +1,41 @@
+﻿@model TblProdukte
+
+@{
+	TblKunde kunde = ViewBag.kunde;
+}
+
+<div class="modal fade" id="addNewProdukt">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="addNewProduktLabel">Add Produkt</h4>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>X</span>
+				</button>
+			</div>
+			<form action="/Kunde/CreateProdukt" method="post">
+
+			<div class="modal-body">
+					<div class="form-group">
+						<label asp-for=ProBezeichnung></label>
+						<input asp-for=ProBezeichnung class="form-control" />
+						<span asp-validation-for=ProBezeichnung class="text-danger"></span>
+					</div>
+					<div class="form-group">
+						<label asp-for=ProKosten></label>
+						<input asp-for=ProKosten class="form-control" />
+						<span asp-validation-for=ProKosten class="text-danger"></span>
+					</div>
+			</div>
+			<div class=modal-footer>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				<input type="submit" class="btn btn-primary" value="Save" />
+
+			</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+

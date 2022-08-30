@@ -1,0 +1,7 @@
+﻿@model BestellungSingle
+
+<fieldset>
+    @Html.HiddenFor(model => model.ProdukteID)
+    @Html.CheckBoxFor(model => model.Active)
+    @Html.DisplayFor(model => model.ProdukteName) 
+</fieldset>

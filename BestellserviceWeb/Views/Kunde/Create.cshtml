@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
+    List<TblGeschlecht> geschlechter = ViewBag.geschlechter;
 }
 
 <h1>Create</h1>
@@ -22,10 +23,22 @@
                 <input asp-for="KunNachname" class="form-control" />
                 <span asp-validation-for="KunNachname" class="text-danger"></span>
             </div>
+            <!--
             <div class="form-group">
-                <label asp-for="KunGeschlecht" class="control-label"></label>
-                <input asp-for="KunGeschlecht" class="form-control" />
-                <span asp-validation-for="KunGeschlecht" class="text-danger"></span>
+                <select asp-for="KunGeschlecht" name="geschlecht" id="KunGeschlecht">
+                    @for(int i = 0; i < geschlechter.Count(); i++)
+                    {
+                         <option value="@geschlechter.ElementAt(i).GesId">@geschlechter.ElementAt(i).GesGeschlecht</option>
+                    }
+                </select>
+            </div>
+            -->
+            <div class="form-group">
+            @Html.LabelFor(model => model.KunGeschlecht, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.DropDownList("KunGeschlecht",new SelectList(geschlechter, "GesId", "GesGeschlecht"), "--Auswahl--", new { @class = "form-control" })
+           </div>
+               <span asp-validation-for="KunGeschlecht" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="KunGeburtsdatum" class="control-label"></label>
@@ -34,7 +47,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="KunVip" class="control-label"></label>
-                <input asp-for="KunVip" class="form-control" />
+                <input asp-for="KunVip" class="form-control" type="checkbox" />
                 <span asp-validation-for="KunVip" class="text-danger"></span>
             </div>
             <div class="form-group">
