@@ -1,0 +1,47 @@
+﻿@model IEnumerable<BestellserviceWeb.Models.TblLeistungsbilderProjekt>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.LeistpAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeistpLeistungsbildNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeistpProjektNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeistpAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeistpLeistungsbildNavigation.LeistName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeistpProjektNavigation.ProjName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.LeistpId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.LeistpId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.LeistpId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

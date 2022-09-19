@@ -314,7 +314,8 @@ namespace BestellserviceWeb.Controllers
             _context.Attach(produkt);
             _context.Entry(produkt).State = Microsoft.EntityFrameworkCore.EntityState.Added;
             _context.SaveChanges();
-            return RedirectToAction("Bestellung", new { id = KundenID });
+
+            return PartialView("CreateProdukt", produkt);
         }
 
 

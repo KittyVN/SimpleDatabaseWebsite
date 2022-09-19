@@ -25,7 +25,10 @@ namespace BestellserviceWeb.Data
         public virtual DbSet<TblDokumente> TblDokumente { get; set; }
         public virtual DbSet<TblGeschlecht> TblGeschlecht { get; set; }
         public virtual DbSet<TblKunde> TblKunde { get; set; }
+        public virtual DbSet<TblLeistungsbilder> TblLeistungsbilder { get; set; }
+        public virtual DbSet<TblLeistungsbilderProjekt> TblLeistungsbilderProjekt { get; set; }
         public virtual DbSet<TblProdukte> TblProdukte { get; set; }
+        public virtual DbSet<TblProjekt> TblProjekt { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -111,6 +114,32 @@ namespace BestellserviceWeb.Data
                     .HasConstraintName("FK__tblKunde__kunGes__0662F0A3");
             });
 
+            modelBuilder.Entity<TblLeistungsbilder>(entity =>
+            {
+                entity.HasKey(e => e.LeistId)
+                    .HasName("PK__tblLeist__0673A60166657747");
+
+                entity.Property(e => e.LeistName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblLeistungsbilderProjekt>(entity =>
+            {
+                entity.HasKey(e => e.LeistpId)
+                    .HasName("PK__tblLeist__2FF4345E8872928D");
+
+                entity.HasOne(d => d.LeistpLeistungsbildNavigation)
+                    .WithMany(p => p.TblLeistungsbilderProjekt)
+                    .HasForeignKey(d => d.LeistpLeistungsbild)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_tblLeistungsbilderProjekt_Leistungsbild");
+
+                entity.HasOne(d => d.LeistpProjektNavigation)
+                    .WithMany(p => p.TblLeistungsbilderProjekt)
+                    .HasForeignKey(d => d.LeistpProjekt)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_tblLeistungsbilderProjekt_Projekt");
+            });
+
             modelBuilder.Entity<TblProdukte>(entity =>
             {
                 entity.HasKey(e => e.ProId)
@@ -121,6 +150,14 @@ namespace BestellserviceWeb.Data
                 entity.Property(e => e.ProZeitstempel)
                     .IsRowVersion()
                     .IsConcurrencyToken();
+            });
+
+            modelBuilder.Entity<TblProjekt>(entity =>
+            {
+                entity.HasKey(e => e.ProjId)
+                    .HasName("PK__tblProje__3E1AD1220FF6052E");
+
+                entity.Property(e => e.ProjName).IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

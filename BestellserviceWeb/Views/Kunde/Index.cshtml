@@ -9,7 +9,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-outline-primary btn-sm" asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -65,19 +65,19 @@
                     }
                 </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.KunId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.KunId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.KunId">Delete</a> |
-                <a asp-action="Export" asp-route-id="@item.KunId">Export</a> |
-                <a asp-action="UploadPic" asp-route-id="@item.KunId">Upload Pictures</a> |
-                <a asp-action="UploadPdf" asp-route-id="@item.KunId">Upload Pdf</a> |
-                <a asp-action="Bestellung" asp-route-id="@item.KunId">Bestellung</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@item.KunId">Edit</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@item.KunId">Details</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="Delete" asp-route-id="@item.KunId">Delete</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="Export" asp-route-id="@item.KunId">Export</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="UploadPic" asp-route-id="@item.KunId">Upload Pictures</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="UploadPdf" asp-route-id="@item.KunId">Upload Pdf</a> |
+                <a class="btn btn-outline-primary btn-sm" asp-action="Bestellung" asp-route-id="@item.KunId">Bestellung</a> |
 
 
 
-                <form asp-action="CartAdd" asp-route-id="@item.KunId">
+                <form asp-action="CartAdd"  asp-route-id="@item.KunId">
                 <input type="hidden" asp-route-id="@item.KunId" asp-for="@item.KunId" />
-                <input type="submit" value="Add to Cart" /> |
+                <input class="btn btn-outline-primary btn-sm" type="submit" value="Add to Cart" /> |
                 </form>
             </td>
         </tr>

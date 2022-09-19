@@ -1,0 +1,45 @@
+﻿@model BestellserviceWeb.Models.TblLeistungsbilder
+
+@{
+    ViewData["Title"] = "Details";
+    List<TblLeistungsbilder> parents = ViewBag.leistungsbilderParents;
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>TblLeistungsbilder</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LeistParent)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LeistParent)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LeistName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LeistName)
+        </dd>
+    </dl>
+</div>
+
+<h4>All the parents:</h4>
+<table class="table">
+    <tbody>
+@foreach (var item in parents) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeistName)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.LeistId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
