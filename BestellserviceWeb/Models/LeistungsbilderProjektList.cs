@@ -4,12 +4,12 @@ namespace BestellserviceWeb.Models
 {
     public class LeistungsbilderProjektList
     {
-        //public List<int> LeistungsbildID { get; set; }
-        public List<decimal> MoneyAmount { get; set; }
+        public List<int> LeistungsbildID { get; set; }
+        public List<double> MoneyAmount { get; set; }
 
-        //public List<string> LeistungsbildName { get; set; }
+        public List<string> LeistungsbildName { get; set; }
 
-        public List<TblLeistungsbilder> Leistungsbild { get; set; }
+        //public List<TblLeistungsbilder> Leistungsbild { get; set; }
         public List<int> LeistungsbildDepth { get; set; }
 
         public List<bool> LeistungsbildActive { get; set; }
@@ -18,11 +18,11 @@ namespace BestellserviceWeb.Models
 
         public LeistungsbilderProjektList()
         {
-            //LeistungsbildID = new List<int>();
-            MoneyAmount = new List<decimal>();
-            //LeistungsbildName = new List<string>();
+            LeistungsbildID = new List<int>();
+            MoneyAmount = new List<double>();
+            LeistungsbildName = new List<string>();
             LeistungsbildDepth = new List<int>();
-            Leistungsbild = new List<TblLeistungsbilder>();
+           // Leistungsbild = new List<TblLeistungsbilder>();
             LeistungsbildActive = new List<bool>();
         }
     }

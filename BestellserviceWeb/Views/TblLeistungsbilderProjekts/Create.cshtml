@@ -9,28 +9,80 @@
 <h4>TblLeistungsbilderProjekt</h4>
 <hr />
 <div class="row">
-	<div class="col-md-4">
+	<div>
 		<form asp-action="Create">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="form-group">
 				<label asp-for="ProjektID" class="control-label"></label>
 				<select asp-for="ProjektID" class="form-control" asp-items="ViewBag.LeistpProjekt"></select>
 			</div>
 			<table>
 				<tbody>
-					@for (int i = 0; i < Model.Leistungsbild.Count(); i++)
+					@for (int i = 0; i < Model.LeistungsbildID.Count(); i++)
 					{
-						<tr>
+						if (Model.LeistungsbildDepth[i] == 0)
+						{
+						@Html.HiddenFor(model => model.LeistungsbildID[i])
+						@Html.HiddenFor(model => model.LeistungsbildName[i])
+						<tr class="table-secondary">
 							<td>
 								@Html.CheckBoxFor(model => model.LeistungsbildActive[i])
 							</td>
 							<td>
-								@Html.DisplayFor(model => model.Leistungsbild[i].LeistName)
+								@Html.DisplayFor(model => model.LeistungsbildName[i])
 							</td>
 							<td>
 								@Html.EditorFor(model => model.MoneyAmount[i])
 							</td>
 						</tr>
+						}
+						if (Model.LeistungsbildDepth[i] == 1)
+						{
+						@Html.HiddenFor(model => model.LeistungsbildID[i])
+						@Html.HiddenFor(model => model.LeistungsbildName[i])
+						<tr class="table-primary">
+							<td>
+								@Html.CheckBoxFor(model => model.LeistungsbildActive[i])
+							</td>
+							<td>
+								@Html.DisplayFor(model => model.LeistungsbildName[i])
+							</td>
+							<td>
+								@Html.EditorFor(model => model.MoneyAmount[i])
+							</td>
+						</tr>
+						}
+						if (Model.LeistungsbildDepth[i] == 2)
+						{
+						@Html.HiddenFor(model => model.LeistungsbildID[i])
+						@Html.HiddenFor(model => model.LeistungsbildName[i])
+						<tr class="table-success">
+							<td>
+								@Html.CheckBoxFor(model => model.LeistungsbildActive[i])
+							</td>
+							<td>
+								@Html.DisplayFor(model => model.LeistungsbildName[i])
+							</td>
+							<td>
+								@Html.EditorFor(model => model.MoneyAmount[i])
+							</td>
+						</tr>
+						}
+						if (Model.LeistungsbildDepth[i] == 3)
+						{
+						@Html.HiddenFor(model => model.LeistungsbildID[i])
+						@Html.HiddenFor(model => model.LeistungsbildName[i])
+						<tr class="table-success">
+							<td>
+								@Html.CheckBoxFor(model => model.LeistungsbildActive[i])
+							</td>
+							<td>
+								@Html.DisplayFor(model => model.LeistungsbildName[i])
+							</td>
+							<td>
+								@Html.EditorFor(model => model.MoneyAmount[i])
+							</td>
+						</tr>
+						}
 					}
 				</tbody>
 			</table>

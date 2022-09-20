@@ -12,6 +12,32 @@ namespace BestellserviceWeb.Models
     [Table("tblLeistungsbilderProjekt")]
     public partial class TblLeistungsbilderProjekt
     {
+        public TblLeistungsbilderProjekt()
+        {
+                
+        }
+
+        public TblLeistungsbilderProjekt(int project, int leistungsbild, double amount)
+        {
+            LeistpProjekt = project;
+            LeistpLeistungsbild = leistungsbild;
+            LeistpAmount = amount;
+        }
+
+        public TblLeistungsbilderProjekt(int id, int project, int leistungsbild, double amount)
+        {
+            LeistpId = id;
+            LeistpProjekt = project;
+            LeistpLeistungsbild = leistungsbild;
+            LeistpAmount = amount;
+        }
+
+        public TblLeistungsbilderProjekt(int project, int leistungsbild)
+        {
+            LeistpProjekt = project;
+            LeistpLeistungsbild = leistungsbild;
+        }
+
         [Key]
         [Column("leistpID")]
         public int LeistpId { get; set; }
@@ -20,7 +46,7 @@ namespace BestellserviceWeb.Models
         [Column("leistpLeistungsbild")]
         public int LeistpLeistungsbild { get; set; }
         [Column("leistpAmount", TypeName = "money")]
-        public decimal? LeistpAmount { get; set; }
+        public double? LeistpAmount { get; set; }
 
         [ForeignKey(nameof(LeistpLeistungsbild))]
         [InverseProperty(nameof(TblLeistungsbilder.TblLeistungsbilderProjekt))]
